@@ -5,17 +5,22 @@ import numpy as np
 
 app = FastAPI()
 
+# Train model
 iris = load_iris()
 model = DecisionTreeClassifier(random_state=42)
 model.fit(iris.data, iris.target)
 class_names = ["setosa", "versicolor", "virginica"]
 
+@app.get("/")
+def root():
+    return {"message": "API running"}
+
 @app.get("/health")
-async def health():
+def health():
     return {"status": "ok"}
 
 @app.get("/predict")
-async def predict(sl: float, sw: float, pl: float, pw: float):
+def predict(sl: float, sw: float, pl: float, pw: float):
     features = np.array([[sl, sw, pl, pw]])
     pred = int(model.predict(features)[0])
     return {"prediction": pred, "class_name": class_names[pred]}
